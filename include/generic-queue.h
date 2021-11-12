@@ -15,12 +15,18 @@ public:
         m_tail_index.store(0);
         m_queue = new T[initial_size];
     }
- 
-    /*template <typename T> */void Enqueue(T object);
-    /*template <typename T> */T Dequeue();
     ~GenericQueue() {
         delete[] m_queue;
     }
+
+    uint32_t Count() const;
+    bool IsEmpty() const;
+
+    void Enqueue(T& object);            // Accepts a reference of an object
+    void Enqueue(const T object);       // a constant type.
+   
+    bool Dequeue(T& object);
+
 private :
     uint32_t m_queue_size;
     // atomic operations
@@ -30,8 +36,24 @@ private :
     T* m_queue;
 };
 
+//Managing functions
+
 template <typename T>
-void GenericQueue<T>::Enqueue(T object) {
+uint32_t GenericQueue<T>::Count() const {
+    return m_head_index - m_tail_index;
+}
+
+template <typename T>
+bool GenericQueue<T>::IsEmpty() const {
+    if (Count() == 0)
+        return true;
+    return false;
+}
+
+// Operation functions
+
+template <typename T>
+void GenericQueue<T>::Enqueue(T& object) {
     if (m_head_index >= m_queue_size) {
         // Currently resize is not supported
         printf("Currently resize is not supported\n");
@@ -41,11 +63,22 @@ void GenericQueue<T>::Enqueue(T object) {
 }
 
 template <typename T>
-T GenericQueue<T>::Dequeue() {
-    if(m_tail_index == m_head_index) {
-        // There is no data to retrieve
-        printf("There is no data to retrieve\n");
-        return nullptr;
+void GenericQueue<T>::Enqueue(const T object) {
+    if (m_head_index >= m_queue_size) {
+        // Currently resize is not supported
+        printf("Currently resize is not supported\n");
+        return;
     }
-    return m_queue[m_tail_index++];
+    m_queue[m_head_index++] = object;
+}
+
+
+template <typename T>
+bool GenericQueue<T>::Dequeue(T& object ) {
+    if(m_tail_index == m_head_index) {
+        //printf("There is no data to retrieve\n");
+        return false;
+    }
+    object =  m_queue[m_tail_index++];
+    return true;
 }
