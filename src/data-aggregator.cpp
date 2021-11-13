@@ -16,7 +16,7 @@ void DataAggregator::data_processor() const {
         int32_t amount_of_values = 0;
 
         auto average = 0;
-        const auto result = m_queue.Dequeue(average);
+        const auto result = m_queue.TryDequeue(average);
         if (result == false) {
             //printf("No data to process.\n");
             Sleep(500);

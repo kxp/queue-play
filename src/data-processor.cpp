@@ -20,7 +20,7 @@ void DataProcessor::data_processor() const {
             continue;
         }
 
-        const auto result = m_source_data_queue.Dequeue(processingData);
+        const auto result = m_source_data_queue.TryDequeue(processingData);
         if (result == false || processingData.empty() == true) {
             Sleep(500);
             continue;
@@ -30,14 +30,17 @@ void DataProcessor::data_processor() const {
             sum += *it;
             amount_of_values++;
         }
-        const auto mean_vale = sum / amount_of_values;
+        const auto& mean_vale = sum / amount_of_values;
 
         // retrieves the results first method is only available in C++17.
         //const auto modern_result = std::reduce(processingData.begin(), processingData.end()) / processingData.size();
         //printf("Iteration:%u Mean value:%lld Second method:%lld\n", num_processed_data, old_result, modern_result);
 
         printf("Processor[%u] - Mean= %lld \n", num_processed_data, mean_vale);
-        m_destination_queue.Enqueue(mean_vale);
+        while (m_destination_queue.TryEnqueue(mean_vale) == false && m_current_state == state::Started) {
+            // Since the queue does not have re-tries, this it.
+            Sleep(100);
+        }
         num_processed_data++;
     }
     printf("Data processor thread terminated\n");

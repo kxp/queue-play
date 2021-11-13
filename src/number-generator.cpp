@@ -31,6 +31,8 @@ void NumberGenerator::Stop()
 }
 
 void NumberGenerator::generator() {
+
+    int64_t vector_average_debug = 0;
     uint32_t run_counter = 0;
     while (m_current_state == state::Started) {
 
@@ -43,8 +45,14 @@ void NumberGenerator::generator() {
             generated_values.push_back(value);
         }
 
-        printf("Generator[%d] - Mean= %lld\n", run_counter, (debug_total / kNumberEntries));
-        m_queue.Enqueue(std::cref(generated_values));
+        const auto average = (debug_total / kNumberEntries);
+        printf("Generator[%d] - Mean= %lld\n", run_counter, average);
+        vector_average_debug += average;
+        while (m_queue.TryEnqueue(generated_values) == false && m_current_state == state::Started) {
+            // Since the queue does not have re-tries, this is 
+            Sleep(100);
+        }
+
         run_counter++;
         // We stop if the value is reached
         if (m_amount_of_runs > 0 && run_counter == m_amount_of_runs)
@@ -52,6 +60,7 @@ void NumberGenerator::generator() {
 
         Sleep(1000);
     }
-    printf("Generator thread terminated\n");
+
+    printf("Generator thread terminated. Average vector mean[%u] - %lld\n",run_counter, vector_average_debug/ run_counter);
     m_current_state = state::Stopped;
 }

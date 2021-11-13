@@ -8,7 +8,7 @@
 #include "include/data-processor.h"
 
 int main() {
-    constexpr auto queue_capacity = 5000;
+    constexpr auto queue_capacity = 5;
 
     // initializes the srand with a time based seed
     srand((unsigned)time(NULL));
