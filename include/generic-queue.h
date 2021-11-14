@@ -91,7 +91,7 @@ bool GenericQueue<T>::TryEnqueue(const T object) {
     }
     else if (m_head_index >= m_queue_size && round_complete == false) {
         // goes back to start
-        printf("Round completed\n");
+        //printf("Round completed\n");
         round_complete = true;
         m_head_index = 0;
     }
@@ -108,15 +108,15 @@ bool GenericQueue<T>::TryEnqueue(const T object) {
 template <typename T>
 bool GenericQueue<T>::TryDequeue(T& object ) {
     if(m_tail_index == m_head_index) {
-        printf("There is no data to retrieve\n");
+        //printf("There is no data to retrieve\n");
         return false;
     } else if (m_tail_index == m_queue_size) {
-        printf("Its going around on dequeue\n");
+        //printf("Its going around on dequeue\n");
         m_tail_index = 0;
         if (round_complete == true)
             round_complete = false;
         else {
-            printf("Failled to deque\n");
+            //printf("Failled to deque\n");
             //probably the buffer is full, and we need to re-evalute in the next time we enter
             return false;
         }

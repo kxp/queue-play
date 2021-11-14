@@ -8,8 +8,7 @@
 
 constexpr uint32_t kNumberEntries = 500;
 
-void NumberGenerator::Start()
-{
+void NumberGenerator::Start() {
     if(m_current_state == state::Started || m_current_state == state::Terminated)
         return; 
 
@@ -17,8 +16,7 @@ void NumberGenerator::Start()
     m_producer_thread = std::thread(&NumberGenerator::generator, this);
 }
 
-void NumberGenerator::Stop()
-{
+void NumberGenerator::Stop() {
     if(m_current_state != state::Started)
         return;
 
@@ -36,7 +34,7 @@ void NumberGenerator::generator() {
     uint32_t run_counter = 0;
     while (m_current_state == state::Started) {
 
-        std::vector<int32_t> generated_values;
+        std::vector<int64_t> generated_values;
         int64_t debug_total = 0;
         for (int i = 0; i < kNumberEntries; ++i) {
             auto value = rand();
